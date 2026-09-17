@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function DestinationSearchResults({ status, results, error, onRetry }) {
   if (status === "idle") {
     return null;
@@ -31,13 +33,22 @@ export default function DestinationSearchResults({ status, results, error, onRet
   }
 
   return (
-    <ul className="mt-4 divide-y divide-slate-200">
+    <ul className="mt-4 divide-y divide-slate-200 overflow-hidden rounded-lg border border-slate-200">
       {results.map((place) => (
-        <li key={`${place.latitude}-${place.longitude}`} className="py-2">
-          <p className="text-sm font-medium text-slate-900">{place.name}</p>
-          <p className="text-xs text-slate-500">
-            {[place.admin1, place.country].filter(Boolean).join(", ")}
-          </p>
+        <li key={place.id}>
+          <Link
+            to={`/destinations/${place.id}`}
+            state={place}
+            className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-slate-50"
+          >
+            <div>
+              <p className="text-sm font-medium text-slate-900">{place.name}</p>
+              <p className="text-xs text-slate-500">
+                {[place.admin1, place.country].filter(Boolean).join(", ")}
+              </p>
+            </div>
+            <span className="text-slate-300">→</span>
+          </Link>
         </li>
       ))}
     </ul>

@@ -2,6 +2,7 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from './Components/Navbar';
 import Destinations from "./pages/Destinations";
+import DestinationDetails from "./pages/DestinationDetails";
 
 
 export default function App() {
@@ -13,7 +14,7 @@ export default function App() {
         <Route path="/destinations" element={<div><Destinations /></div>} />
         <Route
           path="/destinations/:destinationId"
-          element={<div>Destination details page</div>}
+          element={<div><DestinationDetails /></div>}
         />
         <Route path="/trips" element={<div>Trips page</div>} />
         <Route path="/trips/new" element={<div>New trip page</div>} />
