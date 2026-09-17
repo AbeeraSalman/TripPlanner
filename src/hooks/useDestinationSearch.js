@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useDebounce } from "./useDebounce";
 import { searchDestinations } from "../Services/geocodingApi";
 
@@ -10,8 +10,8 @@ export function useDestinationSearch(query) {
   const debouncedQuery = useDebounce(query, 400);
   const abortControllerRef = useRef(null);
 
-  useEffect(() => {
-    const trimmed = debouncedQuery.trim();
+  const runSearch = useCallback((searchTerm) => {
+    const trimmed = searchTerm.trim();
 
     // Cancel whatever request is still in flight before starting/skipping a new one
     if (abortControllerRef.current) {
@@ -41,9 +41,21 @@ export function useDestinationSearch(query) {
         setError(err.message);
         setStatus("error");
       });
+  }, []);
 
-    return () => controller.abort();
-  }, [debouncedQuery]);
+  useEffect(() => {
+    runSearch(debouncedQuery);
 
-  return { results, status, error };
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [debouncedQuery, runSearch]);
+
+  const retry = useCallback(() => {
+    runSearch(debouncedQuery);
+  }, [debouncedQuery, runSearch]);
+
+  return { results, status, error, retry };
 }

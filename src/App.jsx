@@ -1,6 +1,8 @@
 // src/App.jsx
 import { Routes, Route } from "react-router-dom";
-import Navbar from './Components/Navbar/Navbar'
+import Navbar from './Components/Navbar';
+import Destinations from "./pages/Destinations";
+
 
 export default function App() {
   return (<>
@@ -8,7 +10,7 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<div>Home page</div>} />
-        <Route path="/destinations" element={<div>Destinations page</div>} />
+        <Route path="/destinations" element={<div><Destinations /></div>} />
         <Route
           path="/destinations/:destinationId"
           element={<div>Destination details page</div>}
