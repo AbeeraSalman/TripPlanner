@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from './Components/Navbar';
 import Destinations from "./pages/Destinations";
 import DestinationDetails from "./pages/DestinationDetails";
+import Home from "./pages/Home";
 
 
 export default function App() {
@@ -10,7 +11,7 @@ export default function App() {
     <div className="min-h-screen bg-slate-50">
       <Navbar />
       <Routes>
-        <Route path="/" element={<div>Home page</div>} />
+        <Route path="/" element={<div><Home /></div>} />
         <Route path="/destinations" element={<div><Destinations /></div>} />
         <Route
           path="/destinations/:destinationId"
