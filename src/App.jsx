@@ -4,6 +4,9 @@ import Navbar from './Components/Navbar';
 import Destinations from "./pages/Destinations";
 import DestinationDetails from "./pages/DestinationDetails";
 import Home from "./pages/Home";
+import Trips from "./pages/Trips";
+import TripNew from "./pages/TripNew";
+import TripDetail from "./pages/TripDetail";
 
 
 export default function App() {
@@ -17,9 +20,9 @@ export default function App() {
           path="/destinations/:destinationId"
           element={<div><DestinationDetails /></div>}
         />
-        <Route path="/trips" element={<div>Trips page</div>} />
-        <Route path="/trips/new" element={<div>New trip page</div>} />
-        <Route path="/trips/:tripId" element={<div>Trip details page</div>} />
+       <Route path="/trips" element={<Trips />} />
+<Route path="/trips/new" element={<TripNew />} />
+<Route path="/trips/:tripId" element={<TripDetail />} />
         <Route
           path="/trips/:tripId/itinerary"
           element={<div>Trip itinerary page</div>}
