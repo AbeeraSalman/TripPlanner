@@ -1,5 +1,6 @@
 import { AlertCircle, MapPinned } from "lucide-react";
 import { usePlaces } from "../../hooks/usePlaces";
+import SaveButton from "../common/saveButton";
 
 // title/icon/category let this one component serve attractions, restaurants, and hotels
 export default function PlacesSection({ title, icon: Icon, latitude, longitude, category }) {
@@ -46,12 +47,23 @@ export default function PlacesSection({ title, icon: Icon, latitude, longitude, 
         <ul className="space-y-2">
           {places.slice(0, 5).map((place) => (
             <li key={place.id} className="flex items-start justify-between gap-2 text-sm">
-              <span className="font-medium text-slate-800">{place.name}</span>
-              {place.distance != null && (
-                <span className="shrink-0 text-xs text-slate-400">
-                  {Math.round(place.distance)}m
-                </span>
-              )}
+              <span className="min-w-0 font-medium text-slate-800">{place.name}</span>
+              <div className="flex shrink-0 items-center gap-1">
+                {place.distance != null && (
+                  <span className="text-xs text-slate-400">
+                    {Math.round(place.distance)}m
+                  </span>
+                )}
+                <SaveButton
+                  item={{
+                    id: place.id,
+                    type: title.slice(0, -1).toLowerCase(),
+                    name: place.name,
+                    subtitle: place.address,
+                  }}
+                  size={14}
+                />
+              </div>
             </li>
           ))}
         </ul>

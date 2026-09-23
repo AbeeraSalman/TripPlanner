@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import { Calendar, Users, Wallet } from "lucide-react";
+import { formatCurrency } from "../../utils/formatCurrency";
+import { usePreferences } from "../../hooks/usePreferences";
 
 export default function TripCard({ trip }) {
+  const { preferences } = usePreferences();
+
   return (
     <Link
       to={`/trips/${trip.id}`}
@@ -25,7 +29,7 @@ export default function TripCard({ trip }) {
         </span>
         <span className="flex items-center gap-1">
           <Wallet size={14} className="text-indigo-500" />
-          ${trip.budget}
+          {formatCurrency(trip.budget, preferences.currency)}
         </span>
       </div>
     </Link>

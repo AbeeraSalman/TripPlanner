@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { usePreferences } from "../../hooks/usePreferences";
 
 const initialForm = {
   name: "",
@@ -10,7 +11,8 @@ const initialForm = {
 };
 
 export default function TripForm({ onSubmit }) {
-  const [form, setForm] = useState(initialForm);
+  const { preferences } = usePreferences();
+  const [form, setForm] = useState({ ...initialForm, travelers: preferences.defaultTravelers });
   const [errors, setErrors] = useState({});
 
   const handleChange = (field, value) => {

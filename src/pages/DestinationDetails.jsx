@@ -3,6 +3,7 @@ import { Landmark, Utensils, Hotel } from "lucide-react";
 import WeatherCard from "../Components/destination/WeatherCard";
 import WikiSummaryCard from "../Components/destination/WikiSummaryCard";
 import PlacesSection from "../Components/destination/placesSections"
+import SaveButton from "../Components/common/saveButton";
 
 export default function DestinationDetails() {
   const { destinationId } = useParams();
@@ -32,6 +33,16 @@ export default function DestinationDetails() {
         <p className="text-indigo-100">
           {[place.admin1, place.country].filter(Boolean).join(", ")}
         </p>
+        <div className="mt-3">
+          <SaveButton
+            item={{
+              id: `destination-${destinationId}`,
+              type: "destination",
+              name: place.name,
+              subtitle: place.country,
+            }}
+          />
+        </div>
       </div>
 
       {/* Content grid */}

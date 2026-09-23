@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import ExpenseForm from "./ExpenseForm";
+import { formatCurrency } from "../../utils/formatCurrency";
+import { usePreferences } from "../../hooks/usePreferences";
 
 const CATEGORY_COLORS = {
   Accommodation: "bg-indigo-50 text-indigo-600",
@@ -11,13 +13,16 @@ const CATEGORY_COLORS = {
   Miscellaneous: "bg-slate-100 text-slate-600",
 };
 
-export default function ExpenseRow({ expense, onEdit, onDelete }) {
+export default function ExpenseRow({ expense, minDate, maxDate, onEdit, onDelete }) {
+  const { preferences } = usePreferences();
   const [isEditing, setIsEditing] = useState(false);
 
   if (isEditing) {
     return (
       <ExpenseForm
         initialValues={expense}
+        minDate={minDate}
+        maxDate={maxDate}
         onCancel={() => setIsEditing(false)}
         onSubmit={(updates) => {
           onEdit(updates);
@@ -39,7 +44,9 @@ export default function ExpenseRow({ expense, onEdit, onDelete }) {
         <p className="text-xs text-slate-400">{expense.date || "No date"}</p>
       </div>
 
-      <p className="shrink-0 text-sm font-bold text-slate-900">${expense.amount.toFixed(2)}</p>
+      <p className="shrink-0 text-sm font-bold text-slate-900">
+        {formatCurrency(expense.amount, preferences.currency)}
+      </p>
 
       <div className="flex shrink-0 items-center gap-1">
         <button onClick={() => setIsEditing(true)} className="rounded p-1 text-slate-400 hover:bg-slate-100">

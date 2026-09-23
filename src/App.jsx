@@ -12,6 +12,8 @@ import Itinerary from "./pages/Itinerary";
 import Budget from "./pages/Budget";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import Saved from "./pages/saved";
+import Settings from "./pages/Settings";
 
 export default function App() {
   return (
@@ -28,8 +30,8 @@ export default function App() {
             <Route path="/trips/:tripId" element={<TripDetail />} />
             <Route path="/trips/:tripId/itinerary" element={<Itinerary />} />
             <Route path="/trips/:tripId/budget" element={<Budget />} />
-            <Route path="/saved" element={<div>Saved page</div>} />
-            <Route path="/settings" element={<div>Settings page</div>} />
+            <Route path="/saved" element={<Saved />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
           </Routes>

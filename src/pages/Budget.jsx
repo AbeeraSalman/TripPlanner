@@ -86,6 +86,8 @@ export default function Budget() {
                             <ExpenseRow
                                 key={expense.id}
                                 expense={expense}
+                                minDate={trip.startDate}
+                                maxDate={trip.endDate}
                                 onEdit={(updates) => editExpense(expense.id, updates)}
                                 onDelete={() => deleteExpense(expense.id)}
                             />
@@ -93,6 +95,8 @@ export default function Budget() {
 
                         {isAdding ? (
                             <ExpenseForm
+                                minDate={trip.startDate}
+                                maxDate={trip.endDate}
                                 onCancel={() => setIsAdding(false)}
                                 onSubmit={(expense) => {
                                     addExpense(expense);

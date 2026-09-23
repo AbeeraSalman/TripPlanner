@@ -1,8 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 import { CloudSun, Wind, AlertCircle } from "lucide-react";
 import { getCurrentWeather } from "../../Services/weatherApi";
+import { usePreferences } from "../../hooks/usePreferences";
 
 export default function WeatherCard({ latitude, longitude }) {
+  const { preferences } = usePreferences();
   const [weather, setWeather] = useState(null);
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
 
@@ -20,6 +22,10 @@ export default function WeatherCard({ latitude, longitude }) {
   useEffect(() => {
     loadWeather();
   }, [loadWeather]);
+
+  const displayTemp = preferences.temperatureUnit === "F"
+    ? Math.round(weather?.temperature * 9 / 5 + 32)
+    : Math.round(weather?.temperature);
 
   return (
     <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
@@ -53,7 +59,7 @@ export default function WeatherCard({ latitude, longitude }) {
       {status === "success" && weather && (
         <div className="flex items-center gap-4">
           <span className="text-4xl font-bold text-slate-900">
-            {Math.round(weather.temperature)}°C
+            {displayTemp}°{preferences.temperatureUnit}
           </span>
           <span className="flex items-center gap-1 text-sm text-slate-500">
             <Wind size={14} />
