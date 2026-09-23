@@ -12,7 +12,7 @@ export default function SignUp() {
   const handleSubmit = (form) => {
     try {
       signUp(form);
-      navigate("/trips");
+      navigate("/");
     } catch (err) {
       setError(err.message);
     }

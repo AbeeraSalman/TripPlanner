@@ -27,6 +27,13 @@ export default function TripDetail() {
   );
   const totalSpent = trip.expenses.reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
   const remaining = Number(trip.budget) - totalSpent;
+  const today = new Date().toISOString().split("T")[0];
+  const daysWithDates = trip.days.map((day, index) => {
+    const date = new Date(trip.startDate);
+    date.setDate(date.getDate() + index);
+    return { ...day, date: date.toISOString().split("T")[0] };
+  });
+  const upcomingDay = daysWithDates.find((d) => d.date >= today) || daysWithDates[0];
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
@@ -66,6 +73,25 @@ export default function TripDetail() {
           <p className="text-xs text-slate-500">Remaining</p>
         </div>
       </div>
+
+      {upcomingDay?.activities.length > 0 && (
+        <div className="mt-6 rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+            Upcoming Activities — Day {upcomingDay.dayNumber} ({upcomingDay.date})
+          </h2>
+          <div className="space-y-2">
+            {[...upcomingDay.activities]
+              .sort((a, b) => (a.time || "").localeCompare(b.time || ""))
+              .slice(0, 4)
+              .map((a) => (
+                <div key={a.id} className="flex items-center gap-2 text-sm text-slate-700">
+                  {a.time && <span className="font-medium text-indigo-600">{a.time}</span>}
+                  <span>{a.title}</span>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

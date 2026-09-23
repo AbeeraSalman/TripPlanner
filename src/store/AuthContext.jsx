@@ -1,4 +1,4 @@
-import { createContext, useReducer, useEffect } from "react";
+import { createContext, useReducer, useEffect, useState } from "react";
 
 export const AuthContext = createContext(null);
 
@@ -27,10 +27,12 @@ function saveUsers(users) {
 
 export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(authReducer, { user: null });
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem(SESSION_KEY);
     if (saved) dispatch({ type: "LOGIN", payload: JSON.parse(saved) });
+    setIsReady(true);
   }, []);
 
   const signUp = ({ name, email, password }) => {
@@ -62,7 +64,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user: state.user, signUp, signIn, logOut }}>
+    <AuthContext.Provider value={{ user: state.user, isReady, signUp, signIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );

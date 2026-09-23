@@ -40,6 +40,9 @@ export default function DestinationDetails() {
               type: "destination",
               name: place.name,
               subtitle: place.country,
+              admin1: place.admin1,
+              latitude: place.latitude,
+              longitude: place.longitude,
             }}
           />
         </div>

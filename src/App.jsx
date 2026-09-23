@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/layout/footer";
 import ErrorBoundary from "./Components/common/ErrorBoundry";
@@ -14,24 +14,36 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Saved from "./pages/saved";
 import Settings from "./pages/Settings";
+import { useAuth } from "./hooks/useAuth";
+
+function ProtectedRoute({ children }) {
+  const { user, isReady } = useAuth();
+
+  if (!isReady) return null;
+  return user ? children : <Navigate to="/destinations" replace />;
+}
 
 export default function App() {
+  const { user, isReady } = useAuth();
+
+  if (!isReady) return null;
+
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
       <Navbar />
       <main className="flex-1">
         <ErrorBoundary>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={user ? <Home /> : <Navigate to="/destinations" replace />} />
             <Route path="/destinations" element={<Destinations />} />
             <Route path="/destinations/:destinationId" element={<DestinationDetails />} />
-            <Route path="/trips" element={<Trips />} />
-            <Route path="/trips/new" element={<TripNew />} />
-            <Route path="/trips/:tripId" element={<TripDetail />} />
-            <Route path="/trips/:tripId/itinerary" element={<Itinerary />} />
-            <Route path="/trips/:tripId/budget" element={<Budget />} />
-            <Route path="/saved" element={<Saved />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/trips" element={<ProtectedRoute><Trips /></ProtectedRoute>} />
+            <Route path="/trips/new" element={<ProtectedRoute><TripNew /></ProtectedRoute>} />
+            <Route path="/trips/:tripId" element={<ProtectedRoute><TripDetail /></ProtectedRoute>} />
+            <Route path="/trips/:tripId/itinerary" element={<ProtectedRoute><Itinerary /></ProtectedRoute>} />
+            <Route path="/trips/:tripId/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
+            <Route path="/saved" element={<ProtectedRoute><Saved /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
           </Routes>

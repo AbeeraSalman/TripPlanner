@@ -12,7 +12,7 @@ export default function SignIn() {
   const handleSubmit = (form) => {
     try {
       signIn(form);
-      navigate("/trips");
+      navigate("/");
     } catch (err) {
       setError(err.message);
     }

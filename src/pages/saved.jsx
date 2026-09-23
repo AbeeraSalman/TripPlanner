@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Bookmark, Landmark, Utensils, Hotel, MapPin } from "lucide-react";
 import { useSaved } from "../hooks/useSaved";
+import SavedDestinationCard from "../Components/destination/SavedDestinationCard";
 
 const TYPE_META = {
   destination: { label: "Destinations", icon: MapPin },
@@ -40,15 +41,19 @@ export default function Saved() {
             </h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {grouped[type].map((item) => (
-                <div key={item.id} className="flex items-center justify-between rounded-lg border border-slate-100 bg-white p-4 shadow-sm">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-slate-900">{item.name}</p>
-                    {item.subtitle && <p className="truncate text-xs text-slate-500">{item.subtitle}</p>}
+                type === "destination" ? (
+                  <SavedDestinationCard key={item.id} item={item} onRemove={() => toggleSaved(item)} />
+                ) : (
+                  <div key={item.id} className="flex items-center justify-between rounded-lg border border-slate-100 bg-white p-4 shadow-sm">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-slate-900">{item.name}</p>
+                      {item.subtitle && <p className="truncate text-xs text-slate-500">{item.subtitle}</p>}
+                    </div>
+                    <button onClick={() => toggleSaved(item)} className="shrink-0 text-xs font-medium text-red-500 hover:underline">
+                      Remove
+                    </button>
                   </div>
-                  <button onClick={() => toggleSaved(item)} className="shrink-0 text-xs font-medium text-red-500 hover:underline">
-                    Remove
-                  </button>
-                </div>
+                )
               ))}
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, MapPin, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
@@ -14,6 +14,13 @@ const navLinks = [
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, logOut } = useAuth();
+  const navigate = useNavigate();
+  const visibleNavLinks = user ? navLinks : navLinks.filter((link) => link.to === "/destinations");
+
+  const handleLogOut = () => {
+    logOut();
+    navigate("/destinations");
+  };
 
   const linkClass = ({ isActive }) =>
     `rounded-full px-4 py-2 text-sm font-medium transition-colors ${
@@ -21,7 +28,7 @@ export default function Navbar() {
     }`;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
+   <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/80">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <NavLink to="/" className="flex items-center gap-2 text-lg font-bold text-slate-900">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-blue-500 text-white">
@@ -31,7 +38,7 @@ export default function Navbar() {
         </NavLink>
 
         <ul className="hidden items-center gap-1 md:flex">
-          {navLinks.map((link) => (
+          {visibleNavLinks.map((link) => (
             <li key={link.to}>
               <NavLink to={link.to} end={link.to === "/"} className={linkClass}>
                 {link.label}
@@ -44,7 +51,7 @@ export default function Navbar() {
           {user ? (
             <>
               <span className="text-sm text-slate-500">Hi, {user.name.split(" ")[0]}</span>
-              <button onClick={logOut} className="flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium text-slate-500 hover:bg-slate-100">
+              <button onClick={handleLogOut} className="flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium text-slate-500 hover:bg-slate-100">
                 <LogOut size={14} />
                 Log out
               </button>
@@ -64,7 +71,7 @@ export default function Navbar() {
 
       {mobileOpen && (
         <ul className="flex flex-col gap-1 border-t border-slate-100 px-4 py-3 md:hidden">
-          {navLinks.map((link) => (
+          {visibleNavLinks.map((link) => (
             <li key={link.to}>
               <NavLink to={link.to} end={link.to === "/"} onClick={() => setMobileOpen(false)} className={linkClass}>
                 {link.label}
@@ -73,7 +80,7 @@ export default function Navbar() {
           ))}
           <li className="mt-2 border-t border-slate-100 pt-2">
             {user ? (
-              <button onClick={() => { logOut(); setMobileOpen(false); }} className="flex w-full items-center gap-1.5 rounded-lg px-4 py-2 text-sm text-slate-600">
+              <button onClick={() => { handleLogOut(); setMobileOpen(false); }} className="flex w-full items-center gap-1.5 rounded-lg px-4 py-2 text-sm text-slate-600">
                 <LogOut size={14} /> Log out ({user.name.split(" ")[0]})
               </button>
             ) : (
