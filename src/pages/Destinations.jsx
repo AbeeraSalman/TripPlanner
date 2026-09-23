@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Compass } from "lucide-react";
 import { useDestinationSearch } from "../hooks/useDestinationSearch";
-import DestinationSearchBar from "../components/destination/DestinationSearchBar";
+import DestinationSearchBar from "../Components/destination/DestinationSearchBar";
 import DestinationSearchResults from "../Components/destination/DestinationSearchResults";
 import DestinationCard from "../Components/destination/DestinationCard";
 import { TRENDING_DESTINATIONS } from "../utils/TrendingDestinations";

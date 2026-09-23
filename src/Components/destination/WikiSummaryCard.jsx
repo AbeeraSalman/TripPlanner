@@ -2,7 +2,7 @@ import { BookOpen, AlertCircle } from "lucide-react";
 import { useWikiSummary } from "../../hooks/useVikiSummary";
 
 export default function WikiSummaryCard({ placeName,region }) {
-  const { summary, status, retry } = useWikiSummary(placeName);
+  const { summary, status, retry } = useWikiSummary(placeName,region);
 
   if (status === "idle") return null;
 
