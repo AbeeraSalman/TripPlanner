@@ -32,8 +32,8 @@ export default function TripForm({ onSubmit }) {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
@@ -45,19 +45,22 @@ export default function TripForm({ onSubmit }) {
     });
   };
 
+  const labelClass = "mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200";
   const inputClass = (field) =>
-    `w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 focus:ring-indigo-100 ${
-      errors[field] ? "border-red-300 focus:border-red-400" : "border-slate-200 focus:border-indigo-400"
+    `w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition dark:bg-slate-900 dark:text-white ${
+      errors[field]
+        ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100"
+        : "border-slate-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700"
     }`;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">Trip Name</label>
+        <label className={labelClass}>Trip Name</label>
         <input
           type="text"
           value={form.name}
-          onChange={(e) => handleChange("name", e.target.value)}
+          onChange={(event) => handleChange("name", event.target.value)}
           placeholder="e.g. Turkey Vacation"
           className={inputClass("name")}
         />
@@ -65,34 +68,38 @@ export default function TripForm({ onSubmit }) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">Destination</label>
+        <label className={labelClass}>Destination</label>
         <input
           type="text"
           value={form.destination}
-          onChange={(e) => handleChange("destination", e.target.value)}
+          onChange={(event) => handleChange("destination", event.target.value)}
           placeholder="e.g. Istanbul"
           className={inputClass("destination")}
         />
-        {errors.destination && <p className="mt-1 text-xs text-red-600">{errors.destination}</p>}
+        {errors.destination && (
+          <p className="mt-1 text-xs text-red-600">{errors.destination}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Start Date</label>
+          <label className={labelClass}>Start Date</label>
           <input
             type="date"
             value={form.startDate}
-            onChange={(e) => handleChange("startDate", e.target.value)}
+            onChange={(event) => handleChange("startDate", event.target.value)}
             className={inputClass("startDate")}
           />
-          {errors.startDate && <p className="mt-1 text-xs text-red-600">{errors.startDate}</p>}
+          {errors.startDate && (
+            <p className="mt-1 text-xs text-red-600">{errors.startDate}</p>
+          )}
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">End Date</label>
+          <label className={labelClass}>End Date</label>
           <input
             type="date"
             value={form.endDate}
-            onChange={(e) => handleChange("endDate", e.target.value)}
+            onChange={(event) => handleChange("endDate", event.target.value)}
             className={inputClass("endDate")}
           />
           {errors.endDate && <p className="mt-1 text-xs text-red-600">{errors.endDate}</p>}
@@ -101,22 +108,22 @@ export default function TripForm({ onSubmit }) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Travelers</label>
+          <label className={labelClass}>Travelers</label>
           <input
             type="number"
             min="1"
             value={form.travelers}
-            onChange={(e) => handleChange("travelers", e.target.value)}
+            onChange={(event) => handleChange("travelers", event.target.value)}
             className={inputClass("travelers")}
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Budget ($)</label>
+          <label className={labelClass}>Budget ({preferences.currency})</label>
           <input
             type="number"
             min="0"
             value={form.budget}
-            onChange={(e) => handleChange("budget", e.target.value)}
+            onChange={(event) => handleChange("budget", event.target.value)}
             placeholder="e.g. 2500"
             className={inputClass("budget")}
           />
@@ -126,7 +133,7 @@ export default function TripForm({ onSubmit }) {
 
       <button
         type="submit"
-        className="w-full rounded-full bg-indigo-600 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
+        className="w-full rounded-xl bg-indigo-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-600/25 transition hover:bg-indigo-700 active:scale-[0.99]"
       >
         Create Trip
       </button>

@@ -1,12 +1,11 @@
 import { createContext, useReducer, useEffect } from "react";
+import { loadFromStorage } from "../utils/storage";
 
 export const SavedContext = createContext(null);
 const STORAGE_KEY = "tripplanner_saved";
 
 function savedReducer(state, action) {
   switch (action.type) {
-    case "LOAD":
-      return action.payload;
     case "ADD":
       return [...state, action.payload];
     case "REMOVE":
@@ -16,13 +15,13 @@ function savedReducer(state, action) {
   }
 }
 
-export function SavedProvider({ children }) {
-  const [items, dispatch] = useReducer(savedReducer, []);
+function initSavedState() {
+  const savedItems = loadFromStorage(STORAGE_KEY, []);
+  return Array.isArray(savedItems) ? savedItems : [];
+}
 
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) dispatch({ type: "LOAD", payload: JSON.parse(saved) });
-  }, []);
+export function SavedProvider({ children }) {
+  const [items, dispatch] = useReducer(savedReducer, undefined, initSavedState);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));

@@ -1,4 +1,5 @@
 import { createContext, useReducer, useEffect } from "react";
+import { loadFromStorage } from "../utils/storage";
 
 export const PreferencesContext = createContext(null);
 const STORAGE_KEY = "tripplanner_preferences";
@@ -12,8 +13,6 @@ const defaultPreferences = {
 
 function preferencesReducer(state, action) {
   switch (action.type) {
-    case "LOAD":
-      return { ...state, ...action.payload };
     case "UPDATE":
       return { ...state, ...action.payload };
     default:
@@ -21,13 +20,13 @@ function preferencesReducer(state, action) {
   }
 }
 
-export function PreferencesProvider({ children }) {
-  const [preferences, dispatch] = useReducer(preferencesReducer, defaultPreferences);
+// Saved values win, but new default keys still exist for older saved data
+function initPreferences() {
+  return { ...defaultPreferences, ...loadFromStorage(STORAGE_KEY, {}) };
+}
 
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) dispatch({ type: "LOAD", payload: JSON.parse(saved) });
-  }, []);
+export function PreferencesProvider({ children }) {
+  const [preferences, dispatch] = useReducer(preferencesReducer, undefined, initPreferences);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));

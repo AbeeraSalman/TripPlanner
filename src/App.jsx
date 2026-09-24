@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/layout/footer";
 import ErrorBoundary from "./Components/common/ErrorBoundry";
@@ -16,15 +16,18 @@ import Saved from "./pages/saved";
 import Settings from "./pages/Settings";
 import { useAuth } from "./hooks/useAuth";
 
+// Account required beyond browsing: trips, itinerary, budget, saved places, settings.
+// Guests are sent to Sign In and brought back to the page they wanted.
 function ProtectedRoute({ children }) {
   const { user, isReady } = useAuth();
+  const location = useLocation();
 
   if (!isReady) return null;
-  return user ? children : <Navigate to="/destinations" replace />;
+  return user ? children : <Navigate to="/signin" state={{ from: location }} replace />;
 }
 
 export default function App() {
-  const { user, isReady } = useAuth();
+  const { isReady } = useAuth();
 
   if (!isReady) return null;
 
@@ -34,9 +37,16 @@ export default function App() {
       <main className="flex-1">
         <ErrorBoundary>
           <Routes>
-            <Route path="/" element={user ? <Home /> : <Navigate to="/destinations" replace />} />
+            {/* Landing page — the first thing you see when the server starts */}
+            <Route path="/" element={<Home />} />
+
+            {/* Public browsing */}
             <Route path="/destinations" element={<Destinations />} />
             <Route path="/destinations/:destinationId" element={<DestinationDetails />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+
+            {/* Account required */}
             <Route path="/trips" element={<ProtectedRoute><Trips /></ProtectedRoute>} />
             <Route path="/trips/new" element={<ProtectedRoute><TripNew /></ProtectedRoute>} />
             <Route path="/trips/:tripId" element={<ProtectedRoute><TripDetail /></ProtectedRoute>} />
@@ -44,8 +54,9 @@ export default function App() {
             <Route path="/trips/:tripId/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
             <Route path="/saved" element={<ProtectedRoute><Saved /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
+
+            {/* Anything else → back to the landing page */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </ErrorBoundary>
       </main>

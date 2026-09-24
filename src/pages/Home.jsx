@@ -1,81 +1,100 @@
-import { useState } from "react";
-import { Compass, AlertCircle } from "lucide-react";
-import DestinationSearchBar from "../Components/destination/DestinationSearchBar";
-import DestinationSearchResults from "../Components/destination/DestinationSearchResults";
-import DestinationCard from "../Components/destination/DestinationCard";
-import { useDestinationSearch } from "../hooks/useDestinationSearch";
-import { useCountries } from "../hooks/useCountries";
+import { useCallback, useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
+import HeroSearch from "../Components/discover/HeroSearch";
+import TrendingDestinations from "../Components/discover/TrendingDestinations";
+import ExplorePanel from "../Components/discover/ExplorePanel";
+import CountryBrowse from "../Components/discover/CountryBrowse";
 
-const PAGE_SIZE = 8;
+const scrollTo = (id) =>
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
 export default function Home() {
-  const [query, setQuery] = useState("");
-  const { results, status: searchStatus, error, retry } = useDestinationSearch(query);
-  const showSuggestions = query.trim().length > 0;
+  // Shared state: which category is active + which destination is being explored
+  const [category, setCategory] = useState("all");
+  const [destination, setDestination] = useState(null);
+  const { user } = useAuth();
 
-  const { countries, status: countriesStatus } = useCountries();
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const visibleCountries = countries.slice(0, visibleCount);
-  const hasMore = visibleCount < countries.length;
+  // Selecting a destination (trending card or search submit) jumps to the explorer
+  const handleSelect = useCallback((place) => {
+    setDestination(place);
+    requestAnimationFrame(() => scrollTo("explore"));
+  }, []);
+
+  // Hero tabs: switch category and move to the relevant section
+  const handleHeroCategory = useCallback(
+    (id) => {
+      setCategory(id);
+      scrollTo(destination ? "explore" : "trending");
+    },
+    [destination]
+  );
+
+  // Explorer segmented control: the user is already in the section — no scroll
+  const handleExploreCategory = useCallback((id) => {
+    setCategory(id);
+  }, []);
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-900">
-      <div className="bg-gradient-to-br from-indigo-600 via-indigo-500 to-blue-500 px-4 py-20 text-center text-white">
-        <h1 className="text-4xl font-bold sm:text-5xl">Plan your next adventure</h1>
-        <p className="mx-auto mt-3 max-w-md text-sm text-indigo-100 sm:text-base">
-          Discover destinations, check the weather, and build the perfect itinerary — all in one place.
-        </p>
-        <div className="relative mx-auto mt-8 flex max-w-xl justify-center">
-          <DestinationSearchBar value={query} onChange={setQuery} />
-          {showSuggestions && (
-            <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-80 overflow-y-auto rounded-xl bg-white p-2 text-left shadow-lg">
-              <DestinationSearchResults status={searchStatus} results={results} error={error} onRetry={retry} />
-            </div>
-          )}
-        </div>
-      </div>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <HeroSearch
+        category={category}
+        onCategoryChange={handleHeroCategory}
+        onSelectDestination={handleSelect}
+      />
 
-      <div className="mx-auto max-w-5xl px-4 py-10">
-        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-white">
-          <Compass size={20} className="text-indigo-500" />
-          Explore Destinations
-        </h2>
+      <TrendingDestinations selectedId={destination?.id} onSelect={handleSelect} />
 
-        {countriesStatus === "loading" && (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-48 animate-pulse rounded-xl bg-slate-200" />
-            ))}
-          </div>
-        )}
+      <section id="explore" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-10">
+        <ExplorePanel
+          destination={destination}
+          category={category}
+          onCategoryChange={handleExploreCategory}
+        />
+      </section>
 
-        {countriesStatus === "error" && (
-          <div className="flex flex-col items-center gap-2 rounded-xl border border-red-100 bg-red-50 py-10 text-center">
-            <AlertCircle size={24} className="text-red-500" />
-            <p className="text-sm font-medium text-red-700">Unable to load destinations.</p>
-          </div>
-        )}
+      <CountryBrowse />
 
-        {countriesStatus === "success" && (
-          <>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              {visibleCountries.map((place) => (
-                <DestinationCard key={place.id} place={place} />
-              ))}
-            </div>
-            {hasMore && (
-              <div className="mt-6 flex justify-center">
-                <button
-                  onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                  className="rounded-full border border-indigo-200 px-5 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50"
+      {/* Closing CTA — existing routes only */}
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-600 px-6 py-12 text-center text-white sm:px-12">
+          <div className="absolute -left-16 -top-16 h-52 w-52 rounded-full bg-white/10" />
+          <div className="absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-white/10" />
+          <div className="relative">
+            <h2 className="text-2xl font-bold sm:text-3xl">
+              Ready to turn ideas into an itinerary?
+            </h2>
+            <p className="mx-auto mt-2 max-w-lg text-sm text-indigo-100">
+              Save your favorite places, build a day-by-day plan and track your budget — all in
+              Trips.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              {user ? (
+                <Link
+                  to="/trips"
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-bold text-indigo-700 shadow-lg transition hover:bg-indigo-50"
                 >
-                  Load More
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+                  Go to my trips <ArrowRight size={16} />
+                </Link>
+              ) : (
+                <Link
+                  to="/signup"
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-bold text-indigo-700 shadow-lg transition hover:bg-indigo-50"
+                >
+                  Create free account <ArrowRight size={16} />
+                </Link>
+              )}
+              <Link
+                to="/destinations"
+                className="inline-flex items-center gap-2 rounded-full border border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                {user ? "Keep exploring" : "Browse destinations"}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

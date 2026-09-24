@@ -20,5 +20,7 @@ export async function getNearbyPlaces(latitude, longitude, category, { signal } 
     name: feature.properties.name || "Unnamed place",
     address: feature.properties.address_line2 || feature.properties.formatted,
     distance: feature.properties.distance,
+    latitude: feature.properties.lat,
+    longitude: feature.properties.lon,
   }));
 }

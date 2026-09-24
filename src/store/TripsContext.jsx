@@ -1,20 +1,18 @@
 import { createContext, useReducer, useEffect } from "react";
 import { tripsReducer, initialTripsState } from "./TripReducer";
+import { loadFromStorage } from "../utils/storage";
 
 export const TripsContext = createContext(null);
 
 const STORAGE_KEY = "tripplanner_trips";
 
-export function TripsProvider({ children }) {
-  const [state, dispatch] = useReducer(tripsReducer, initialTripsState);
+function initTripsState() {
+  const savedTrips = loadFromStorage(STORAGE_KEY, []);
+  return { ...initialTripsState, trips: Array.isArray(savedTrips) ? savedTrips : [] };
+}
 
-  // Load once on mount
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      dispatch({ type: "LOAD_TRIPS", payload: JSON.parse(saved) });
-    }
-  }, []);
+export function TripsProvider({ children }) {
+  const [state, dispatch] = useReducer(tripsReducer, undefined, initTripsState);
 
   // Persist whenever trips change
   useEffect(() => {
